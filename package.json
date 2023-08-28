@@ -13,11 +13,8 @@
     "eslint-config-next": "13.4.19",
     "next": "13.4.19",
     "react": "18.2.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.2.0",
-    "react-draggable": "^4.4.5",
-    "react-resizable": "^3.0.5"
+    "react-draggable": "^4.4.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.15",
