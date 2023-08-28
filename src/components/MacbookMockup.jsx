@@ -3,9 +3,9 @@ import Draggable from "react-draggable";
 import Image from "next/image";
 import mockup2 from "@/images/mockup2.png";
 
-export default function IphoneMockup() {
+export default function IphoneMockup({ scale }) {
   return (
-    <main className="">
+    <main className="" style={{ transform: `scale(${scale})` }}>
       <Draggable>
         <div>
           <div className="flex flex-col items-center justify-center">
