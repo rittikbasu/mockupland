@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Draggable from "react-draggable";
 import Image from "next/image";
-import mockup2 from "@/images/mockup2.png";
+import { RiDragMove2Fill } from "react-icons/ri";
 
-export default function IphoneMockup({ scale }) {
+export default function MacbookMockup({ scale, image }) {
   return (
-    <main className="" style={{ transform: `scale(${scale})` }}>
-      <Draggable>
-        <div>
-          <div className="flex flex-col items-center justify-center">
+    <main className="z-10" style={{ transform: `scale(${scale})` }}>
+      <Draggable
+      //   handle=".macbook-drag-handle"
+      >
+        <div className="top-0 left-0 right-0 bottom-0 cursor-grab active:cursor-grabbing">
+          <div className="flex h-full items-center justify-center">
             <div className="border-t border-x border-zinc-500 rounded-t-2xl bg-gray-800">
               <div className="relative mx-auto border-black bg-black border-[8px] rounded-t-2xl h-[172px] max-w-[301px] md:h-[350px] md:max-w-[512px]">
                 <div className="w-[60px] h-[10px] bg-black top-0 rounded-b-[0.25rem] left-1/2 -translate-x-1/2 absolute flex items-center justify-center">
@@ -20,19 +22,24 @@ export default function IphoneMockup({ scale }) {
                 </div>
                 <div className="rounded-lg overflow-hidden h-[156px] md:h-[350px] w-[480px] bg-black">
                   <Image
-                    src={mockup2}
+                    src={image}
                     className="pointer-events-none h-[156px] md:h-[324px] w-full rounded-t-lg"
                     alt=""
+                    height={324}
+                    width={480}
                   />
                 </div>
               </div>
             </div>
           </div>
-          <div className="relative mx-auto bg-zinc-400 shadow-inner shadow-zinc-700 rounded-b-xl rounded-t-sm h-[17px] max-w-[351px] md:h-[21px] md:max-w-[597px]">
+          <div className="relative mx-auto bg-gradient-to-r from-zinc-400/90 via-zinc-200/90 to-zinc-400/90 shadow-inner shadow-zinc-700 rounded-b-xl rounded-t-sm h-[17px] max-w-[351px] md:h-[21px] md:max-w-[597px]">
             <div className="absolute left-1/2 top-0 -translate-x-1/2 shadow-inner shadow-zinc-700 rounded-b-xl w-[56px] h-[5px] md:w-[96px] md:h-[8px] bg-zinc-500/40"></div>
             <div className="absolute left-6 -bottom-[0.14rem] rounded-b-xl w-[8px] h-[8px] md:w-[30px] md:h-[2px] bg-zinc-600"></div>
             <div className="absolute right-8 -bottom-[0.14rem] rounded-b-xl w-[8px] h-[8px] md:w-[30px] md:h-[2px] bg-zinc-600"></div>
           </div>
+          {/* <div className="macbook-drag-handle mt-2">
+            <RiDragMove2Fill className="h-6 w-6 cursor-grab active:cursor-grabbing fill-zinc-300" />
+          </div> */}
         </div>
       </Draggable>
     </main>

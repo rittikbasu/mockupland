@@ -1,28 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Draggable from "react-draggable";
 import Image from "next/image";
 import mockup1 from "@/images/mockup1.png";
+import { RiDragMove2Fill } from "react-icons/ri";
 
-export default function IphoneMockup({ scale, setScale }) {
-  const handleScaleChange = (event) => {
-    setScale(parseFloat(event.target.value));
+export default function IphoneMockup({ scale }) {
+  const dragRef = useRef(null);
+  const [bounds, setBounds] = useState({
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+  });
+
+  useEffect(() => {
+    const container = dragRef.current;
+
+    if (container) {
+      const containerRect = container.getBoundingClientRect();
+      console.log(containerRect);
+      setBounds({
+        left: containerRect.left,
+        top: containerRect.top,
+        right: containerRect.left + containerRect.width,
+        bottom: containerRect.top + containerRect.height,
+      });
+    }
+  }, []);
+  const [isDraggable, setIsDraggable] = useState(true);
+  const handleMouseDown = () => {
+    // toggle isDraggable using previous state
+    setIsDraggable((isDraggable) => !isDraggable);
+    console.log(isDraggable);
+  };
+
+  const handleStop = () => {
+    console.log(isDraggable);
+    setIsDraggable(true);
   };
   return (
-    <main className="z-50">
-      <input
-        type="range"
-        min="0.5"
-        max="2"
-        step="0.1"
-        value={scale}
-        onChange={handleScaleChange}
-        className="w-[300px] mx-auto mb-4"
-      />
-      <Draggable disabled={false}>
-        <div className="flex flex-col items-center justify-center mb-10">
+    <main className="">
+      <Draggable
+        disabled={isDraggable}
+        // bounds={{ top: -406, left: -364, right: 364, bottom: 34 }}
+        onMouseDown={handleMouseDown}
+        // onStop={handleStop}
+        // handle=".drag-handle"
+      >
+        <div className="flex cursor-grab active:cursor-grabbing items-center justify-center draggable-element">
           <div
             className="rounded-[3rem] border border-zinc-400 bg-gray-800"
             style={{ transform: `scale(${scale})` }}
+            ref={dragRef}
           >
             <div className="relative mx-auto border-black dark:border-black bg-black border-[10px] rounded-[3rem] h-[600px] w-[300px] shadow-xl">
               <div className="w-[78px] h-[22px] flex items-center bg-black top-1 rounded-full left-1/2 -translate-x-1/2 absolute">
@@ -38,7 +67,7 @@ export default function IphoneMockup({ scale, setScale }) {
               <div className="h-[64px] w-[3px] border-[0.5px] border-zinc-500 bg-stone-800 absolute -right-[14px] top-[142px] rounded-r-lg"></div>
               {/* create the bottom line on iphone */}
               <div className="h-[5px] left-1/2 -translate-x-1/2 w-4/12 border-[0.5px] border-zinc-300/80 bg-zinc-200 absolute bottom-[4px] rounded-lg"></div>
-              <div className="rounded-[2.3rem] mx-auto overflow-hidden w-[282px] h-[582px] bg-white dark:bg-black">
+              <div className="rounded-[2.3rem] mx-auto select-none overflow-hidden pointer-events-none w-[282px] h-[582px] bg-white dark:bg-black">
                 <Image
                   src={mockup1}
                   className=" w-[282px] h-[582px] pointer-events-none"
@@ -47,6 +76,10 @@ export default function IphoneMockup({ scale, setScale }) {
               </div>
             </div>
           </div>
+          {/* drag svg icon hand grab */}
+          {/* <div className="drag-handle mt-2">
+            <RiDragMove2Fill className="h-6 w-6 cursor-grab active:cursor-grabbing fill-zinc-300" />
+          </div> */}
         </div>
       </Draggable>
     </main>
