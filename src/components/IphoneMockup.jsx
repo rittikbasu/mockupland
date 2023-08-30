@@ -6,6 +6,7 @@ import { RiDragMove2Fill } from "react-icons/ri";
 
 export default function IphoneMockup({ scale }) {
   const dragRef = useRef(null);
+  const draggableRef = useRef(null);
   const [bounds, setBounds] = useState({
     left: 0,
     top: 0,
@@ -41,13 +42,17 @@ export default function IphoneMockup({ scale }) {
   return (
     <main className="">
       <Draggable
+        nodeRef={draggableRef}
         disabled={isDraggable}
         // bounds={{ top: -406, left: -364, right: 364, bottom: 34 }}
         onMouseDown={handleMouseDown}
         // onStop={handleStop}
         // handle=".drag-handle"
       >
-        <div className="flex cursor-grab active:cursor-grabbing items-center justify-center draggable-element">
+        <div
+          className="flex cursor-grab w-[300px] active:cursor-grabbing items-center justify-center draggable-element"
+          ref={draggableRef}
+        >
           <div
             className="rounded-[3rem] border border-zinc-400 bg-gray-800"
             style={{ transform: `scale(${scale})` }}
