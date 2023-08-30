@@ -6,11 +6,16 @@ import { AiOutlineDelete } from "react-icons/ai";
 import macbook from "@/images/macbook.png";
 import iphone from "@/images/iphone.png";
 import Image from "next/image";
+import Link from "next/link";
 import mockup2 from "@/images/mockup2.png";
+import { toPng } from "html-to-image";
 
 export default function Home() {
   const [iphoneScale, setIphoneScale] = useState(1);
   const [macbookScale, setMacbookScale] = useState(1);
+  const [gridOverlayVisible, setGridOverlayVisible] = useState(true);
+  const [mockupContainerVisible, setMockupContainerVisible] = useState(true);
+
   const handleScaleChange = (event) => {
     const { id, value } = event.target;
     if (id === "iphoneScale") {
@@ -51,6 +56,29 @@ export default function Home() {
       console.log(imageUrl, selectedImage);
     }
   };
+  const handleDownload = async () => {
+    const container = document.getElementById("mockup-container");
+    const gridOverlay = document.getElementById("grid-overlay");
+
+    if (container && gridOverlay) {
+      setGridOverlayVisible(false);
+      setMockupContainerVisible(false);
+
+      try {
+        const dataUrl = await toPng(container);
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = "mockup.png";
+        link.click();
+      } catch (error) {
+        console.error("Error generating image:", error);
+      } finally {
+        setGridOverlayVisible(true);
+        setMockupContainerVisible(true);
+      }
+    }
+  };
+
   return (
     <>
       {/* <button
@@ -94,8 +122,8 @@ export default function Home() {
             </li>
             <li>
               {/* make a grid of available mockups */}
-              <label htmlFor="availableMockups" className="">
-                Available Mockups
+              <label htmlFor="devices" className="">
+                Devices
               </label>
               {/* a grid with two columns with available mockups */}
               <div className="grid grid-cols-2 gap-4 pt-2">
@@ -151,18 +179,71 @@ export default function Home() {
                   onChange={handleScaleChange}
                   id="iphoneScale"
                   className="w-[300px] mx-auto appearance-non bg-gradient-to-r disabled:from-gray-400 from-blue-300 via-blue-400 to-blue-500 h-1 rounded-lg"
-                  disabled
+                  // disabled
                 />
               </span>
             </li>
           </ul>
+          <div className="absolute bottom-0 right-0.5 left-0.5 flex justify-center py-8 w-full">
+            <button
+              className="px-6 py-1 text-white border-2 border-blue-500 rounded-lg hover:border-dashed"
+              onClick={handleDownload}
+            >
+              Download
+            </button>
+          </div>
         </div>
       </aside>
 
-      <div className="p-4 sm:mr-64 h-screen" id="mockupland" ref={containerRef}>
-        <div className="justify-center items-center h-full p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 overflow-hidden">
-          <MacbookMockup scale={macbookScale} image={selectedImage} />
-          <IphoneMockup scale={iphoneScale} />
+      <div
+        className="p-4 sm:mr-64 h-screen relative"
+        id="mockupland"
+        ref={containerRef}
+      >
+        <div
+          className={`h-full w-full p-4 ${
+            mockupContainerVisible
+              ? "border-2 bg-zinc-900 border-dashed border-gray-700"
+              : "bg-transparent"
+          } rounded-lg overflow-hidden relative`}
+          id="mockup-container"
+        >
+          {mockupContainerVisible && (
+            <div className="absolute top-0 left-0 p-4 font-mono text-blue-500 text-2xl font-bold">
+              Mockupland
+            </div>
+          )}
+          {mockupContainerVisible && (
+            <Link
+              className="absolute bottom-0 right-0 p-4 font-mono text-blue-500 text-sm font-bold hover:underline"
+              href="https://rittik.io"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Made with ❤️ by Rittik Basu
+            </Link>
+          )}
+          {/* Overlay with grid lines */}
+          {gridOverlayVisible && (
+            <div
+              className="absolute inset-0 z-10 grid grid-cols-5 grid-rows-5 gap-0 pointer-events-none"
+              id="grid-overlay"
+            >
+              {Array.from({ length: 25 }, (_, index) => (
+                <div
+                  key={index}
+                  className="border-dashed border border-gray-200 dark:border-gray-700/40"
+                ></div>
+              ))}
+            </div>
+          )}
+
+          <div className="">
+            <MacbookMockup scale={macbookScale} image={selectedImage} />
+          </div>
+          <div className="">
+            <IphoneMockup scale={iphoneScale} />
+          </div>
         </div>
       </div>
     </>
