@@ -1,29 +1,68 @@
 import React, { useState, useEffect, useRef } from "react";
-import MacbookMockup from "@/components/MacbookMockup";
-import IphoneMockup from "@/components/IphoneMockup";
-import { BsUpload } from "react-icons/bs";
+import { BsUpload, BsDownload, BsGear } from "react-icons/bs";
 import { AiOutlineDelete } from "react-icons/ai";
-import macbook from "@/images/macbook.png";
-import iphone from "@/images/iphone.png";
 import Image from "next/image";
 import Link from "next/link";
-import mockup2 from "@/images/mockup2.png";
 import { toPng } from "html-to-image";
 
+import MacbookMockup from "@/components/MacbookMockup";
+import IphoneMockup from "@/components/IphoneMockup";
+import ImacMockup from "@/components/ImacMockup";
+
+// images
+import macbook from "@/images/macbook.png";
+import iphone from "@/images/iphone.png";
+import imac from "@/images/imac.png";
+import mockup1 from "@/images/mockup1.png";
+import mockup2 from "@/images/mockup2.png";
+
 export default function Home() {
-  const [iphoneScale, setIphoneScale] = useState(1);
-  const [macbookScale, setMacbookScale] = useState(1);
   const [gridOverlayVisible, setGridOverlayVisible] = useState(true);
   const [mockupContainerVisible, setMockupContainerVisible] = useState(true);
+  const deviceData = [
+    {
+      id: 1,
+      name: "Macbook",
+      image: macbook,
+      scale: 1,
+      selected: false,
+      mockupDisplay: mockup2,
+    },
+    {
+      id: 2,
+      name: "iPhone",
+      image: iphone,
+      scale: 1,
+      selected: false,
+      mockupDisplay: mockup1,
+    },
+    {
+      id: 3,
+      name: "iMac",
+      image: imac,
+      scale: 1,
+      selected: false,
+      mockupDisplay: mockup2,
+    },
+  ];
+  const [devices, setDevices] = useState(deviceData);
 
-  const handleScaleChange = (event) => {
-    const { id, value } = event.target;
-    if (id === "iphoneScale") {
-      setIphoneScale(value);
-    } else {
-      setMacbookScale(value);
-    }
+  const handleScaleChange = (event, id) => {
+    const scale = event.target.value;
+
+    setDevices((prev) => {
+      return prev.map((device) => {
+        if (device.id === Number(id)) {
+          return {
+            ...device,
+            scale: scale,
+          };
+        }
+        return device;
+      });
+    });
   };
+
   const containerRef = useRef(null);
   const [bounds, setBounds] = useState({
     left: 0,
@@ -46,14 +85,45 @@ export default function Home() {
       });
     }
   }, []);
-  const [selectedImage, setSelectedImage] = useState(mockup2);
+
+  const handleDeviceSelect = (id, selected) => {
+    console.log(id, selected);
+    setDevices((prev) => {
+      return prev.map((device) => {
+        if (device.id === id) {
+          if (selected === false) {
+            // Replace with default data from deviceData array
+            console.log(
+              deviceData.find((defaultDevice) => defaultDevice.id === id)
+            );
+            return deviceData.find((defaultDevice) => defaultDevice.id === id);
+          } else {
+            return {
+              ...device,
+              selected: selected,
+            };
+          }
+        }
+        return device;
+      });
+    });
+  };
 
   const handleImageUpload = (event) => {
     const imageFile = event.target.files[0];
     if (imageFile) {
       const imageUrl = URL.createObjectURL(imageFile);
-      setSelectedImage(imageUrl);
-      console.log(imageUrl, selectedImage);
+      setDevices((prev) => {
+        return prev.map((device) => {
+          if (device.selected) {
+            return {
+              ...device,
+              mockupDisplay: imageUrl,
+            };
+          }
+          return device;
+        });
+      });
     }
   };
   const handleDownload = async () => {
@@ -81,26 +151,62 @@ export default function Home() {
 
   return (
     <>
-      {/* <button
-        data-drawer-target="default-sidebar"
-        data-drawer-toggle="default-sidebar"
-        aria-controls="default-sidebar"
-        type="button"
-        className="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-      >
-        <span className="sr-only">Open sidebar</span>
-      </button> */}
-
-      <aside
-        id="default-sidebar"
+      <div
         className="fixed top-0 right-0 w-64 h-screen py-4 mr-2"
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 py-4 overflow-y-auto rounded-lg bg-gray-50 dark:bg-zinc-800">
+        <div className="relative h-full px-3 py-4 overflow-y-auto rounded-lg bg-gray-50 dark:bg-zinc-800">
           <div className="font-medium text-2xl flex items-center m-2 mb-12 text-gray-900 rounded-lg dark:text-white">
             Control Panel
           </div>
           <ul className="space-y-8 mx-2 font-medium overflow-hidden">
+            <li>
+              {/* make a grid of available mockups */}
+              <label htmlFor="devices" className="">
+                Devices
+              </label>
+              {/* a grid with two columns with available mockups */}
+              <div className="grid grid-cols-2 gap-4 pt-2">
+                {devices.map((device) => (
+                  <div
+                    key={device.id}
+                    className={`flex items-center justify-center w-full h-full relative border border-dashed rounded-lg py-2 text-gray-900 dark:text-white group ${
+                      device.selected
+                        ? "border-blue-400"
+                        : "border-gray-400 hover:border-green-200"
+                    }`}
+                  >
+                    <button
+                      className="flex items-center justify-center select-none"
+                      onClick={() => handleDeviceSelect(device.id, true)}
+                      disabled={device.selected}
+                    >
+                      <Image
+                        src={device.image}
+                        alt={device.name}
+                        width={80}
+                        height={80}
+                        className="rounded-lg"
+                      />
+                    </button>
+                    {device.selected && (
+                      <button
+                        className="absolute top-0 right-0 p-0.5"
+                        onClick={() => handleDeviceSelect(device.id, false)}
+                      >
+                        <AiOutlineDelete className="text-red-500" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </li>
+            {/* horizontal line */}
+            <div className="border-b border-gray-400"></div>
+            {/* title of the selected device */}
+            {/* <div className="font-medium text-xl text-gray-900 dark:text-white">
+              Macbook
+            </div> */}
             <li>
               {/* upload image */}
               <span className="flex border border-dashed border-gray-400 items-center py-2 text-gray-900 rounded-lg dark:text-white hover:border-blue-400 group">
@@ -121,34 +227,6 @@ export default function Home() {
               </span>
             </li>
             <li>
-              {/* make a grid of available mockups */}
-              <label htmlFor="devices" className="">
-                Devices
-              </label>
-              {/* a grid with two columns with available mockups */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="flex items-center justify-center w-full h-full cursor-pointer border border-gray-400 border-dashed p-1 rounded-lg hover:border-blue-400 relative">
-                  <div className="absolute top-0 right-0 p-0.5">
-                    <AiOutlineDelete className="text-red-500" />
-                  </div>
-                  <Image src={macbook} alt="macbook" width={100} height={100} />
-                  {/* show a delete icon on top right corner */}
-                </div>
-                <div className="flex items-center justify-center w-full h-full cursor-pointer border border-gray-400 border-dashed p-1 rounded-lg hover:border-blue-400">
-                  <Image
-                    src={iphone}
-                    alt="iphone"
-                    width={100}
-                    height={100}
-                    className=""
-                  />
-                </div>
-                <div className="flex items-center justify-center w-full h-full cursor-pointer border border-gray-400 border-dashed p-1 rounded-lg hover:border-blue-400">
-                  <Image src={macbook} alt="macbook" width={100} height={100} />
-                </div>
-              </div>
-            </li>
-            <li>
               <label htmlFor="macbookScale" className="">
                 Macbook Scale
               </label>
@@ -158,10 +236,11 @@ export default function Home() {
                   min="0.5"
                   max="2"
                   step="0.1"
-                  value={macbookScale}
-                  onChange={handleScaleChange}
+                  value={devices[0].scale}
+                  onChange={(event) => handleScaleChange(event, 1)}
                   id="macbookScale"
-                  className="w-[300px] mx-auto appearance-none bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 h-1 rounded-lg"
+                  className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
+                  disabled={!devices[0].selected}
                 />
               </span>
             </li>
@@ -175,25 +254,45 @@ export default function Home() {
                   min="0.5"
                   max="2"
                   step="0.1"
-                  value={iphoneScale}
-                  onChange={handleScaleChange}
+                  value={devices[1].scale}
+                  onChange={(event) => handleScaleChange(event, 2)}
                   id="iphoneScale"
-                  className="w-[300px] mx-auto appearance-non bg-gradient-to-r disabled:from-gray-400 from-blue-300 via-blue-400 to-blue-500 h-1 rounded-lg"
-                  // disabled
+                  className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
+                  disabled={!devices[1].selected}
+                />
+              </span>
+            </li>
+            <li>
+              <label htmlFor="imacScale" className="">
+                iMac Scale
+              </label>
+              <span className="flex space-y-2 items-center py-2 text-gray-900 rounded-lg dark:text-white">
+                <input
+                  type="range"
+                  min="0.5"
+                  max="2"
+                  step="0.1"
+                  value={devices[2].scale}
+                  onChange={(event) => handleScaleChange(event, 3)}
+                  id="imacScale"
+                  className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
+                  disabled={!devices[2].selected}
                 />
               </span>
             </li>
           </ul>
-          <div className="absolute bottom-0 right-0.5 left-0.5 flex justify-center py-8 w-full">
+          <div className="bottom-0 absolute w-full flex flex-col py-8 justify-center right-0">
+            <div className="border-b border-gray-400 mx-5"></div>
             <button
-              className="px-6 py-1 text-white border-2 border-blue-500 rounded-lg hover:border-dashed"
+              className="mx-5 py-2 mt-8 flex items-center justify-center text-white border border-blue-500 rounded-lg hover:border-dashed"
               onClick={handleDownload}
             >
+              <BsDownload className="inline-flex mr-2" />
               Download
             </button>
           </div>
         </div>
-      </aside>
+      </div>
 
       <div
         className="p-4 sm:mr-64 h-screen relative"
@@ -239,10 +338,21 @@ export default function Home() {
           )}
 
           <div className="">
-            <MacbookMockup scale={macbookScale} image={selectedImage} />
-          </div>
-          <div className="">
-            <IphoneMockup scale={iphoneScale} />
+            <ImacMockup
+              scale={devices[2].scale}
+              image={devices[2].mockupDisplay}
+              selected={devices[2].selected}
+            />
+            <MacbookMockup
+              scale={devices[0].scale}
+              image={devices[0].mockupDisplay}
+              selected={devices[0].selected}
+            />
+            <IphoneMockup
+              scale={devices[1].scale}
+              image={devices[1].mockupDisplay}
+              selected={devices[1].selected}
+            />
           </div>
         </div>
       </div>

@@ -3,16 +3,20 @@ import Draggable from "react-draggable";
 import Image from "next/image";
 import { RiDragMove2Fill } from "react-icons/ri";
 
-export default function MacbookMockup({ scale, image }) {
+export default function MacbookMockup({ scale, image, selected }) {
   const draggableRef = useRef(null);
   return (
-    <main className="z-10" style={{ transform: `scale(${scale})` }}>
+    <main
+      className={!selected ? "hidden" : ""}
+      style={{ transform: `scale(${scale})` }}
+    >
       <Draggable
         nodeRef={draggableRef}
         //   handle=".macbook-drag-handle"
+        defaultPosition={{ x: 500, y: 300 }}
       >
         <div
-          className="top-0 left-0 right-0 bottom-0 max-w-[597px] cursor-grab active:cursor-grabbing"
+          className="max-w-[597px] cursor-grab active:cursor-grabbing"
           ref={draggableRef}
         >
           <div className="flex h-full items-center justify-center">
