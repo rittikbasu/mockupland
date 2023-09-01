@@ -4,24 +4,19 @@ import Image from "next/image";
 import mockup1 from "@/images/mockup1.png";
 import { RiDragMove2Fill } from "react-icons/ri";
 
-export default function IphoneMockup({ scale, selected }) {
+export default function IphoneMockup({ scale, selected, image, homebarColor }) {
   const draggableRef = useRef(null);
 
   const containerWidth = 300 * scale;
   const containerHeight = 600 * scale;
 
   return (
-    <main
-      className={
-        !selected
-          ? "hidden"
-          : "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-      }
-    >
+    <main className={!selected ? "hidden" : ""}>
       <Draggable
         nodeRef={draggableRef}
         // bounds={{ top: -406, left: -364, right: 364, bottom: 34 }}
         // handle=".drag-handle"
+        defaultPosition={{ x: 250, y: 250 }}
       >
         <div
           className="flex cursor-grab w-[300px] active:cursor-grabbing items-center justify-center draggable-element"
@@ -33,7 +28,7 @@ export default function IphoneMockup({ scale, selected }) {
           ref={draggableRef}
         >
           <div
-            className="rounded-[3rem] border border-zinc-400 bg-gray-800"
+            className="rounded-[3rem] border-[1.5px] border-zinc-400 bg-gray-800"
             style={{ transform: `scale(${scale})` }}
           >
             <div className="relative mx-auto border-black dark:border-black bg-black border-[10px] rounded-[3rem] h-[600px] w-[300px] shadow-xl">
@@ -44,17 +39,21 @@ export default function IphoneMockup({ scale, selected }) {
                   </div>
                 </div>
               </div>
-              <div className="h-[24px] w-[3px] border-[0.5px] border-zinc-500 bg-stone-800 absolute -left-[14px] top-[80px] rounded-l-lg"></div>
-              <div className="h-[46px] w-[3px] border-[0.5px] border-zinc-500 bg-stone-800 absolute -left-[14px] top-[124px] rounded-l-lg"></div>
-              <div className="h-[46px] w-[3px] border-[0.5px] border-zinc-500 bg-stone-800 absolute -left-[14px] top-[178px] rounded-l-lg"></div>
-              <div className="h-[64px] w-[3px] border-[0.5px] border-zinc-500 bg-stone-800 absolute -right-[14px] top-[142px] rounded-r-lg"></div>
+              <div className="h-[24px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -left-[14.4px] top-[80px] rounded-full"></div>
+              <div className="h-[46px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -left-[14.4px] top-[124px] rounded-full"></div>
+              <div className="h-[46px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -left-[14.4px] top-[184px] rounded-full"></div>
+              <div className="h-[64px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -right-[14.7px] top-[142px] rounded-full"></div>
               {/* create the bottom line on iphone */}
-              <div className="h-[5px] left-1/2 -translate-x-1/2 w-4/12 border-[0.5px] bg-black absolute bottom-[4px] rounded-lg"></div>
-              <div className="rounded-[2.3rem] mx-auto select-none overflow-hidden pointer-events-none w-[282px] h-[582px] bg-white dark:bg-black">
+              <div
+                className={`h-[4px] left-1/2 -translate-x-1/2 w-4/12 ${homebarColor} absolute bottom-[4px] rounded-lg`}
+              ></div>
+              <div className="rounded-[2.3rem] mx-auto select-none overflow-hidden pointer-events-none w-[282px] h-[582px] bg-black">
                 <Image
-                  src={mockup1}
+                  src={image}
                   className=" w-[282px] h-[582px] pointer-events-none"
                   alt=""
+                  height={582}
+                  width={282}
                 />
               </div>
             </div>

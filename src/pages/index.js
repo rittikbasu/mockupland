@@ -49,6 +49,29 @@ export default function Home() {
     },
   ];
   const [devices, setDevices] = useState(deviceData);
+  const [homebarVisible, setHomebarVisible] = useState(true);
+  const [homebarColor, setHomebarColor] = useState("bg-white");
+
+  function handleHomebarVisibility(e) {
+    const checked = e.target.checked;
+    if (checked) {
+      setHomebarVisible(true);
+    } else {
+      setHomebarVisible(false);
+      setHomebarColor("");
+    }
+  }
+
+  function toggleHomebar(e) {
+    const checked = e.target.checked;
+    if (checked) {
+      setHomebarColor("bg-black");
+      console.log("black");
+    } else {
+      setHomebarColor("bg-white");
+      console.log("white");
+    }
+  }
 
   const handleScaleChange = (event, id) => {
     const scale = event.target.value;
@@ -273,7 +296,7 @@ export default function Home() {
                         />
                       </span>
                     </li>
-                    <li>
+                    <li className="space-y-4">
                       {/* scale slider */}
                       <label htmlFor="scale" className="flex items-center">
                         <span className="mr-2">Scale</span>
@@ -281,11 +304,11 @@ export default function Home() {
                           {device.scale}x
                         </span>
                       </label>
-                      <span className="flex items-center space-y-2 py-2 text-gray-900 rounded-lg dark:text-white group">
+                      <span className="flex items-center text-gray-900 rounded-lg dark:text-white group">
                         <input
                           type="range"
                           id="scale"
-                          className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
+                          className="w-[300px] mx-auto accent-blue-600 rounded-lg"
                           min="0.5"
                           max="2"
                           step="0.1"
@@ -296,6 +319,61 @@ export default function Home() {
                         />
                       </span>
                     </li>
+                    {device.id === 2 && (
+                      <li className="space-y-4">
+                        <span className="mr-2">Homebar</span>
+                        <label className="flex items-center cursor-pointer">
+                          <div className="mr-3">Off</div>
+                          <div className="relative">
+                            <input
+                              type="checkbox"
+                              className="hidden"
+                              onChange={handleHomebarVisibility}
+                              checked={homebarVisible}
+                            />
+                            <div
+                              className={`w-12 h-6 rounded-full shadow-inner ${
+                                homebarVisible ? "bg-blue-500" : "bg-zinc-400"
+                              }`}
+                            ></div>
+                            <div
+                              className={`absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0 ${
+                                homebarVisible ? "transform translate-x-6" : ""
+                              }`}
+                            ></div>
+                          </div>
+                          <div className="ml-3">On</div>
+                        </label>
+                        {homebarVisible && (
+                          <label className="flex items-center cursor-pointer">
+                            <div className="mr-3 text-sm">White</div>
+                            <div className="relative">
+                              <input
+                                type="checkbox"
+                                className="hidden"
+                                onChange={toggleHomebar}
+                                checked={homebarColor === "bg-black"}
+                              />
+                              <div
+                                className={`w-12 h-6 rounded-full shadow-inner ${
+                                  homebarColor === "bg-black"
+                                    ? "bg-blue-500"
+                                    : "bg-zinc-400"
+                                }`}
+                              ></div>
+                              <div
+                                className={`absolute w-6 h-6 bg-white rounded-full shadow inset-y-0 left-0 ${
+                                  homebarColor === "bg-black"
+                                    ? "transform translate-x-6"
+                                    : ""
+                                }`}
+                              ></div>
+                            </div>
+                            <div className="ml-3 text-sm">Black</div>
+                          </label>
+                        )}
+                      </li>
+                    )}
                   </div>
                 )
             )}
@@ -375,6 +453,7 @@ export default function Home() {
               scale={devices[1].scale}
               image={devices[1].mockupDisplay}
               selected={devices[1].selected}
+              homebarColor={homebarColor}
             />
           </div>
         </div>
