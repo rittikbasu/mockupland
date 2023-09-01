@@ -27,6 +27,7 @@ export default function Home() {
       scale: 1,
       selected: false,
       mockupDisplay: mockup2,
+      mockupSelected: false,
     },
     {
       id: 2,
@@ -35,6 +36,7 @@ export default function Home() {
       scale: 1,
       selected: false,
       mockupDisplay: mockup1,
+      mockupSelected: false,
     },
     {
       id: 3,
@@ -43,6 +45,7 @@ export default function Home() {
       scale: 1,
       selected: false,
       mockupDisplay: mockup2,
+      mockupSelected: false,
     },
   ];
   const [devices, setDevices] = useState(deviceData);
@@ -87,35 +90,64 @@ export default function Home() {
   }, []);
 
   const handleDeviceSelect = (id, selected) => {
-    console.log(id, selected);
-    setDevices((prev) => {
-      return prev.map((device) => {
+    const selectedDevice = devices.find(
+      (device) => device.selected && device.id !== id
+    );
+
+    setDevices((prev) =>
+      prev.map((device) => {
         if (device.id === id) {
           if (selected === false) {
             // Replace with default data from deviceData array
-            console.log(
-              deviceData.find((defaultDevice) => defaultDevice.id === id)
-            );
             return deviceData.find((defaultDevice) => defaultDevice.id === id);
           } else {
             return {
               ...device,
               selected: selected,
+              mockupSelected: selected,
             };
           }
+        } else if (device.id === selectedDevice?.id && selected === false) {
+          return {
+            ...device,
+            mockupSelected: true,
+          };
+        } else {
+          return {
+            ...device,
+            mockupSelected: false,
+          };
         }
-        return device;
+      })
+    );
+  };
+
+  const handleMockupSelect = (id, selected) => {
+    // when one mockup is selected, all other mockups are deselected
+    setDevices((prev) => {
+      return prev.map((device) => {
+        if (device.id === id) {
+          return {
+            ...device,
+            mockupSelected: selected,
+          };
+        } else {
+          return {
+            ...device,
+            mockupSelected: false,
+          };
+        }
       });
     });
   };
 
-  const handleImageUpload = (event) => {
+  const handleImageUpload = (event, id) => {
     const imageFile = event.target.files[0];
     if (imageFile) {
       const imageUrl = URL.createObjectURL(imageFile);
       setDevices((prev) => {
         return prev.map((device) => {
-          if (device.selected) {
+          if (device.id === id) {
             return {
               ...device,
               mockupDisplay: imageUrl,
@@ -126,6 +158,7 @@ export default function Home() {
       });
     }
   };
+
   const handleDownload = async () => {
     const container = document.getElementById("mockup-container");
     const gridOverlay = document.getElementById("grid-overlay");
@@ -162,24 +195,31 @@ export default function Home() {
           <ul className="space-y-8 mx-2 font-medium overflow-hidden">
             <li>
               {/* make a grid of available mockups */}
-              <label htmlFor="devices" className="">
+              <label htmlFor="devices" className="text-xl">
                 Devices
               </label>
               {/* a grid with two columns with available mockups */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
+              <div className="grid grid-cols-2 gap-4 pt-4">
                 {devices.map((device) => (
                   <div
                     key={device.id}
-                    className={`flex items-center justify-center w-full h-full relative border border-dashed rounded-lg py-2 text-gray-900 dark:text-white group ${
+                    className={`flex items-center justify-center w-full border h-full relative ${
+                      device.mockupSelected && "bg-blue-500/20"
+                    } border-dashed rounded-lg py-2 text-gray-900 dark:text-white group ${
                       device.selected
                         ? "border-blue-400"
-                        : "border-gray-400 hover:border-green-200"
+                        : "border-gray-400 hover:border-green-300"
                     }`}
                   >
                     <button
                       className="flex items-center justify-center select-none"
-                      onClick={() => handleDeviceSelect(device.id, true)}
-                      disabled={device.selected}
+                      onClick={() => {
+                        if (device.selected === false) {
+                          handleDeviceSelect(device.id, true);
+                        } else {
+                          handleMockupSelect(device.id, true);
+                        }
+                      }}
                     >
                       <Image
                         src={device.image}
@@ -203,83 +243,62 @@ export default function Home() {
             </li>
             {/* horizontal line */}
             <div className="border-b border-gray-400"></div>
-            {/* title of the selected device */}
-            {/* <div className="font-medium text-xl text-gray-900 dark:text-white">
-              Macbook
-            </div> */}
-            <li>
-              {/* upload image */}
-              <span className="flex border border-dashed border-gray-400 items-center py-2 text-gray-900 rounded-lg dark:text-white hover:border-blue-400 group">
-                <label
-                  htmlFor="upload"
-                  className="flex items-center justify-center w-full h-full cursor-pointer"
-                >
-                  <BsUpload className="mr-2 -ml-2 text-gray-300" />
-                  <span>Upload</span>
-                </label>
-                <input
-                  type="file"
-                  id="upload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
-              </span>
-            </li>
-            <li>
-              <label htmlFor="macbookScale" className="">
-                Macbook Scale
-              </label>
-              <span className="flex items-center space-y-2 py-2 text-gray-900 rounded-lg dark:text-white group">
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2"
-                  step="0.1"
-                  value={devices[0].scale}
-                  onChange={(event) => handleScaleChange(event, 1)}
-                  id="macbookScale"
-                  className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
-                  disabled={!devices[0].selected}
-                />
-              </span>
-            </li>
-            <li>
-              <label htmlFor="iphoneScale" className="">
-                iPhone Scale
-              </label>
-              <span className="flex space-y-2 items-center py-2 text-gray-900 rounded-lg dark:text-white">
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2"
-                  step="0.1"
-                  value={devices[1].scale}
-                  onChange={(event) => handleScaleChange(event, 2)}
-                  id="iphoneScale"
-                  className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
-                  disabled={!devices[1].selected}
-                />
-              </span>
-            </li>
-            <li>
-              <label htmlFor="imacScale" className="">
-                iMac Scale
-              </label>
-              <span className="flex space-y-2 items-center py-2 text-gray-900 rounded-lg dark:text-white">
-                <input
-                  type="range"
-                  min="0.5"
-                  max="2"
-                  step="0.1"
-                  value={devices[2].scale}
-                  onChange={(event) => handleScaleChange(event, 3)}
-                  id="imacScale"
-                  className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
-                  disabled={!devices[2].selected}
-                />
-              </span>
-            </li>
+            {devices.map(
+              (device) =>
+                device.mockupSelected && (
+                  <div className="space-y-8" key={device.id}>
+                    <li key={device.id}>
+                      <div className="font-medium text-xl text-gray-900 dark:text-white">
+                        {device.name}
+                      </div>
+                    </li>
+                    <li>
+                      {/* upload image */}
+                      <span className="flex border border-dashed border-gray-400 items-center py-2 text-gray-900 rounded-lg dark:text-white hover:border-blue-400 group">
+                        <label
+                          htmlFor="upload"
+                          className="flex items-center justify-center w-full h-full cursor-pointer"
+                        >
+                          <BsUpload className="mr-2 -ml-2 text-gray-300" />
+                          <span>Upload</span>
+                        </label>
+                        <input
+                          type="file"
+                          id="upload"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(event) =>
+                            handleImageUpload(event, device.id)
+                          }
+                        />
+                      </span>
+                    </li>
+                    <li>
+                      {/* scale slider */}
+                      <label htmlFor="scale" className="flex items-center">
+                        <span className="mr-2">Scale</span>
+                        <span className="text-gray-400 text-sm">
+                          {device.scale}x
+                        </span>
+                      </label>
+                      <span className="flex items-center space-y-2 py-2 text-gray-900 rounded-lg dark:text-white group">
+                        <input
+                          type="range"
+                          id="scale"
+                          className="w-[300px] mx-auto accent-blue-600 h-1 rounded-lg"
+                          min="0.5"
+                          max="2"
+                          step="0.1"
+                          value={device.scale}
+                          onChange={(event) =>
+                            handleScaleChange(event, device.id)
+                          }
+                        />
+                      </span>
+                    </li>
+                  </div>
+                )
+            )}
           </ul>
           <div className="bottom-0 absolute w-full flex flex-col py-8 justify-center right-0">
             <div className="border-b border-gray-400 mx-5"></div>
@@ -337,17 +356,21 @@ export default function Home() {
             </div>
           )}
 
-          <div className="">
+          <div className="" onClick={() => handleMockupSelect(3, true)}>
             <ImacMockup
               scale={devices[2].scale}
               image={devices[2].mockupDisplay}
               selected={devices[2].selected}
             />
+          </div>
+          <div className="" onClick={() => handleMockupSelect(1, true)}>
             <MacbookMockup
               scale={devices[0].scale}
               image={devices[0].mockupDisplay}
               selected={devices[0].selected}
             />
+          </div>
+          <div className="" onClick={() => handleMockupSelect(2, true)}>
             <IphoneMockup
               scale={devices[1].scale}
               image={devices[1].mockupDisplay}
