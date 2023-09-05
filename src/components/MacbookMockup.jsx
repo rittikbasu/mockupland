@@ -13,7 +13,7 @@ export default function MacbookMockup({ scale, image, selected }) {
       <Draggable
         nodeRef={draggableRef}
         //   handle=".macbook-drag-handle"
-        defaultPosition={{ x: 500, y: 300 }}
+        // defaultPosition={{ x: 500, y: 300 }}
       >
         <div
           className="max-w-[597px] cursor-grab active:cursor-grabbing"
@@ -29,10 +29,10 @@ export default function MacbookMockup({ scale, image, selected }) {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-lg overflow-hidden h-[156px] md:h-[350px] w-[480px] bg-black">
+                <div className="rounded-t overflow-hidden h-[156px] md:h-[324px] w-[480px] bg-black">
                   <Image
                     src={image}
-                    className="pointer-events-none h-[156px] md:h-[324px] w-full rounded-t-lg"
+                    className="pointer-events-none h-fit rounded-t-lg"
                     alt=""
                     height={324}
                     width={480}

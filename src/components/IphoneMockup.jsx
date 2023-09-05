@@ -39,10 +39,10 @@ export default function IphoneMockup({ scale, selected, image, homebarColor }) {
                   </div>
                 </div>
               </div>
-              <div className="h-[24px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -left-[14.4px] top-[80px] rounded-full"></div>
-              <div className="h-[46px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -left-[14.4px] top-[124px] rounded-full"></div>
-              <div className="h-[46px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -left-[14.4px] top-[184px] rounded-full"></div>
-              <div className="h-[64px] w-[3px] border-[0.1px] border-zinc-600 bg-zinc-800 shadow-inner shadow-zinc-800 absolute -right-[14.7px] top-[142px] rounded-full"></div>
+              <div className="h-[24px] w-[2px] border-l-[2px] border-y-[2px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-900 absolute -left-[13.5px] top-[80px] rounded-full"></div>
+              <div className="h-[46px] w-[2px] border-l-[2px] border-y-[2px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -left-[13.5px] top-[124px] rounded-full"></div>
+              <div className="h-[46px] w-[2px] border-l-[2px] border-y-[2px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -left-[13.5px] top-[184px] rounded-full"></div>
+              <div className="h-[64px] w-[2px] border-r-[2px] border-y-[2px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -right-[13.6px] top-[142px] rounded-full"></div>
               {/* create the bottom line on iphone */}
               <div
                 className={`h-[4px] left-1/2 -translate-x-1/2 w-4/12 ${homebarColor} absolute bottom-[4px] rounded-lg`}
@@ -50,7 +50,7 @@ export default function IphoneMockup({ scale, selected, image, homebarColor }) {
               <div className="rounded-[2.3rem] mx-auto select-none overflow-hidden pointer-events-none w-[282px] h-[582px] bg-black">
                 <Image
                   src={image}
-                  className=" w-[282px] h-[582px] pointer-events-none"
+                  className=" w-fit pointer-events-none"
                   alt=""
                   height={582}
                   width={282}

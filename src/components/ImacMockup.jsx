@@ -24,7 +24,6 @@ export default function ImacMockup({ scale, image, selected }) {
       <Draggable
         //   nodeRef={draggableRef}
         defaultPosition={{ x: -250, y: -250 }}
-        bounds="#mockupland"
       >
         <div className="absolute mx-auto cursor-grab active:cursor-grabbing max-w-[512px]">
           <div
@@ -34,7 +33,7 @@ export default function ImacMockup({ scale, image, selected }) {
             <div className="overflow-hidden h-[140px] md:h-[262px]">
               <Image
                 src={image}
-                className="h-[140px] md:h-[262px] pointer-events-none"
+                className="h-fit pointer-events-none"
                 height={262}
                 width={480}
                 alt=""
