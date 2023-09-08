@@ -45,7 +45,7 @@ export default function ImacMockup({ scale, image, selected }) {
               <BsApple className="h-6 w-6 text-zinc-900/80 fill-current absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
           </div>
-          <div className=" mx-auto bg-gradient-to-r from-zinc-500 via-zinc-300 to-zinc-500 h-[95px] w-[142px]"></div>
+          <div className=" mx-auto bg-gradient-to-r from-zinc-500 via-zinc-300 to-zinc-500 h-[95px] w-[142px] rounded-b-2xl"></div>
         </div>
       </Draggable>
     </main>

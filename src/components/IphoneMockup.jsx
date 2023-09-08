@@ -14,7 +14,7 @@ export default function IphoneMockup({ scale, selected, image, homebarColor }) {
         nodeRef={draggableRef}
         // bounds={{ top: -406, left: -364, right: 364, bottom: 34 }}
         // handle=".drag-handle"
-        defaultPosition={{ x: 250, y: 250 }}
+        // defaultPosition={{ x: 502, y: 504 }}
       >
         <div
           className="flex cursor-grab w-[150px] active:cursor-grabbing items-center justify-center draggable-element"
@@ -38,10 +38,10 @@ export default function IphoneMockup({ scale, selected, image, homebarColor }) {
                 </div>
               </div>
 
-              <div className="h-[14px] w-[1.5px] border-l-[1.5px] border-y-[1.5px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-900 absolute -left-[7.1px] top-[45px] rounded-full"></div>
-              <div className="h-[23px] w-[1.5px] border-l-[1.5px] border-y-[1.5px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -left-[7.1px] top-[72px] rounded-full"></div>
-              <div className="h-[23px] w-[1.5px] border-l-[1.5px] border-y-[1.5px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -left-[7.1px] top-[102px] rounded-full"></div>
-              <div className="h-[32px] w-[1.5px] border-r-[1.5px] border-y-[1.5px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -right-[7.3px] top-[85px] rounded-full"></div>
+              <div className="h-[10px] w-[1px] border-l-[1px] border-y-[1px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-900 absolute -left-[6.5px] top-[45px] rounded-full"></div>
+              <div className="h-[23px] w-[1px] border-l-[1px] border-y-[1px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -left-[6.5px] top-[68px] rounded-full"></div>
+              <div className="h-[23px] w-[1px] border-l-[1px] border-y-[1px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -left-[6.5px] top-[98px] rounded-full"></div>
+              <div className="h-[32px] w-[1px] border-r-[1px] border-y-[1px] border-zinc-700 bg-zinc-900 shadow-inner shadow-zinc-800 absolute -right-[6.8px] top-[81px] rounded-full"></div>
               {/* create the bottom line on iphone */}
               <div
                 className={`h-[2.5px] left-1/2 -translate-x-1/2 w-4/12 ${homebarColor} absolute bottom-[4px] rounded-lg`}

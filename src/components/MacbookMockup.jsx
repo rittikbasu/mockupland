@@ -13,7 +13,7 @@ export default function MacbookMockup({ scale, image, selected }) {
       <Draggable
         nodeRef={draggableRef}
         //   handle=".macbook-drag-handle"
-        // defaultPosition={{ x: 500, y: 300 }}
+        defaultPosition={{ x: 500, y: 300 }}
       >
         <div
           className="max-w-[597px] cursor-grab active:cursor-grabbing"
