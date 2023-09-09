@@ -1,63 +1,25 @@
 import React, { useState, useEffect, useRef } from "react";
-import { BsUpload, BsDownload } from "react-icons/bs";
+import { BsUpload } from "react-icons/bs";
 import Link from "next/link";
-import { toPng, toJpeg } from "html-to-image";
-import { HexColorPicker, HexColorInput } from "react-colorful";
 
 // components
 import MacbookMockup from "@/components/MacbookMockup";
 import IphoneMockup from "@/components/IphoneMockup";
 import ImacMockup from "@/components/ImacMockup";
+import DeviceButton from "@/components/DeviceButton";
+import ImageSettings from "@/components/ImageSettings";
+import ColorPickerModal from "@/components/ColorPickerModal";
+import HomebarControl from "@/components/HomebarControl";
 
-// icons
-import { AiOutlineDelete } from "react-icons/ai";
-import { IoPhonePortraitOutline, IoLaptopOutline } from "react-icons/io5";
-import { MdOutlineDesktopMac, MdClose } from "react-icons/md";
-
-// images
-import mockup1 from "@/images/mockup1.png";
-import mockup2 from "@/images/mockup2.png";
+// data
+import { deviceData } from "@/data/deviceData";
 
 export default function Home() {
   const [gridOverlayVisible, setGridOverlayVisible] = useState(true);
   const [mockupContainerVisible, setMockupContainerVisible] = useState(true);
-  const deviceData = [
-    {
-      id: 1,
-      name: "Macbook",
-      scale: 1,
-      selected: false,
-      mockupDisplay: mockup2,
-      activelySelected: false,
-      position: 2,
-    },
-    {
-      id: 2,
-      name: "iPhone",
-      scale: 1,
-      selected: false,
-      mockupDisplay: mockup1,
-      activelySelected: false,
-      position: 3,
-    },
-    {
-      id: 3,
-      name: "iMac",
-      scale: 1,
-      selected: false,
-      mockupDisplay: mockup2,
-      activelySelected: false,
-      position: 1,
-    },
-  ];
   const [devices, setDevices] = useState(deviceData);
   const [selectedDevices, setSelectedDevices] = useState(0);
-  const [imageWidth, setImageWidth] = useState(1200);
-  const [imageHeight, setImageHeight] = useState(1200);
-  const [imageFormat, setImageFormat] = useState("png");
   const [backgroundColor, setBackgroundColor] = useState("#18181b"); // Initial color
-  const [canvasBackgroundColor, setCanvasBackgroundColor] =
-    useState("bg-zinc-900");
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [homebarVisible, setHomebarVisible] = useState(true);
   const [homebarColor, setHomebarColor] = useState("bg-white");
@@ -73,15 +35,6 @@ export default function Home() {
     }
   }
 
-  function toggleHomebar(e) {
-    const checked = e.target.checked;
-    if (checked) {
-      setHomebarColor("bg-black");
-    } else {
-      setHomebarColor("bg-white");
-    }
-  }
-
   const toggleColorPicker = () => {
     setColorPickerVisible(!colorPickerVisible);
   };
@@ -90,8 +43,6 @@ export default function Home() {
     console.log(color);
     setBackgroundColor(color);
     console.log(backgroundColor);
-    setCanvasBackgroundColor(`bg-[${color}]`);
-    console.log(canvasBackgroundColor);
   }
 
   const handleScaleChange = (event, id) => {
@@ -234,57 +185,6 @@ export default function Home() {
     }
   };
 
-  const handleDownload = async (e) => {
-    e.preventDefault();
-    const container = document.getElementById("mockup-container");
-    const gridOverlay = document.getElementById("grid-overlay");
-
-    // get height and width of the container
-
-    if (!container || !gridOverlay) return;
-
-    setGridOverlayVisible(false);
-    setMockupContainerVisible(false);
-
-    try {
-      let dataUrl;
-
-      switch (imageFormat) {
-        case "png":
-          dataUrl = await toPng(container, {
-            height: imageHeight,
-            width: imageWidth,
-            canvasHeight: imageHeight,
-            canvasWidth: imageWidth,
-          });
-          break;
-        case "jpg":
-          dataUrl = await toJpeg(container, {
-            height: imageHeight,
-            width: imageWidth,
-            backgroundColor: backgroundColor,
-          });
-          break;
-        default:
-          throw new Error("Unsupported image format");
-      }
-
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = `mockup.${imageFormat}`;
-      link.style.display = "none";
-      document.body.appendChild(link);
-
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error("Error generating or downloading image:", error);
-    } finally {
-      setGridOverlayVisible(true);
-      setMockupContainerVisible(true);
-    }
-  };
-
   function handlePositionChange(position, id) {
     // Find the device that will move to the selected position
     const deviceToMove = devices.find((device) => device.id === id);
@@ -332,45 +232,12 @@ export default function Home() {
               {/* a grid with two columns with available mockups */}
               <div className="grid grid-cols-3 gap-4 pt-4">
                 {devices.map((device) => (
-                  <div
+                  <DeviceButton
                     key={device.id}
-                    className={`flex items-center justify-center w-full border h-full relative ${
-                      device.activelySelected && "bg-blue-500/20"
-                    } border-dashed rounded-lg text-gray-900 dark:text-white group transition-all  ${
-                      device.selected
-                        ? "border-blue-400"
-                        : "border-gray-400 hover:border-green-300"
-                    }`}
-                  >
-                    <button
-                      className="flex items-center justify-center w-full h-full py-2"
-                      onClick={() => {
-                        if (device.selected === false) {
-                          handleDeviceSelect(device.id, true);
-                        } else {
-                          handleMockupSelect(device.id, true);
-                        }
-                      }}
-                    >
-                      {device.name === "iMac" && (
-                        <MdOutlineDesktopMac className="h-8 w-8" />
-                      )}
-                      {device.name === "Macbook" && (
-                        <IoLaptopOutline className="h-8 w-8" />
-                      )}
-                      {device.name === "iPhone" && (
-                        <IoPhonePortraitOutline className="h-8 w-8" />
-                      )}
-                    </button>
-                    {device.selected && (
-                      <button
-                        className="absolute top-0 right-0 p-0.5 "
-                        onClick={() => handleDeviceSelect(device.id, false)}
-                      >
-                        <AiOutlineDelete className="text-red-500 hover:text-red-800" />
-                      </button>
-                    )}
-                  </div>
+                    device={device}
+                    handleDeviceSelect={handleDeviceSelect}
+                    handleMockupSelect={handleMockupSelect}
+                  />
                 ))}
               </div>
             </li>
@@ -478,157 +345,26 @@ export default function Home() {
                     {/* Homebar */}
                     {device.id === 2 && (
                       <li className="space-y-4">
-                        <span className="mr-2">Homebar</span>
-                        <label className="flex items-center cursor-pointer">
-                          <div className="mr-3 text-sm">Off</div>
-                          <div className="relative">
-                            <input
-                              type="checkbox"
-                              className="hidden"
-                              onChange={handleHomebarVisibility}
-                              checked={homebarVisible}
-                            />
-                            <div
-                              className={`w-10 h-5 rounded-full shadow-inner ${
-                                homebarVisible ? "bg-blue-500" : "bg-zinc-400"
-                              }`}
-                            ></div>
-                            <div
-                              className={`absolute w-5 h-5 bg-white rounded-full shadow inset-y-0 left-0 ${
-                                homebarVisible ? "transform translate-x-5" : ""
-                              }`}
-                            ></div>
-                          </div>
-                          <div className="ml-3 text-sm">On</div>
-                        </label>
-                        {homebarVisible && (
-                          <label className="flex items-center cursor-pointer">
-                            <div className="mr-3 text-sm">White</div>
-                            <div className="relative">
-                              <input
-                                type="checkbox"
-                                className="hidden"
-                                onChange={toggleHomebar}
-                                checked={homebarColor === "bg-black"}
-                              />
-                              <div
-                                className={`w-10 h-5 rounded-full shadow-inner ${
-                                  homebarColor === "bg-black"
-                                    ? "bg-blue-500"
-                                    : "bg-zinc-400"
-                                }`}
-                              ></div>
-                              <div
-                                className={`absolute w-5 h-5 bg-white rounded-full shadow inset-y-0 left-0 ${
-                                  homebarColor === "bg-black"
-                                    ? "transform translate-x-5"
-                                    : ""
-                                }`}
-                              ></div>
-                            </div>
-                            <div className="ml-3 text-sm">Black</div>
-                          </label>
-                        )}
+                        <HomebarControl
+                          homebarVisible={homebarVisible}
+                          handleHomebarVisibility={handleHomebarVisibility}
+                          homebarColor={homebarColor}
+                          setHomebarColor={setHomebarColor}
+                          // toggleHomebar={toggleHomebar}
+                        />
                       </li>
                     )}
                   </div>
                 )
             )}
           </ul>
-          <form
-            className="bottom-0 absolute w-full flex flex-col border border-dashed border-blue-600 bg-zinc-900/80 rounded-lg justify-center right-0"
-            onSubmit={handleDownload}
-          >
-            <div className="mx-5 mt-4">
-              <span>Image Settings</span>
-            </div>
-            <div className="flex items-center space-x-4 mx-5 mt-4">
-              <div className="flex items-center">
-                <label htmlFor="width" className="mr-2 text-sm">
-                  Width
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  id="width"
-                  className="w-full px-2 py-0.5 text-sm bg-zinc-600 rounded-md"
-                  placeholder="px"
-                  value={imageWidth}
-                  onChange={(event) => setImageWidth(event.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex items-center">
-                <label htmlFor="height" className="mr-2 text-sm">
-                  Height
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  id="height"
-                  className="w-full px-2 text-sm py-0.5 bg-zinc-600 rounded-md"
-                  placeholder="px"
-                  value={imageHeight}
-                  onChange={(event) => setImageHeight(event.target.value)}
-                  required
-                />
-              </div>
-            </div>
-            {/* a select dropdown with available formats */}
-            <div className="flex items-center space-x-4 mx-5 mt-4">
-              <div className="flex items-center">
-                <label htmlFor="format" className="mr-2 text-sm">
-                  Format
-                </label>
-                <select
-                  name="format"
-                  id="format"
-                  className="w-full px-2 py-0.5 text-sm bg-zinc-600 rounded-md"
-                  value={imageFormat}
-                  onChange={(event) => setImageFormat(event.target.value)}
-                >
-                  <option value="png">png</option>
-                  <option value="jpg">jpeg</option>
-                </select>
-              </div>
-            </div>
-
-            {/* <div className="flex items-center space-x-4 mx-5 mt-4">
-              <div className="flex items-center">
-                <button
-                  type="button"
-                  onClick={toggleColorPicker}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-                >
-                  Change Background Color
-                </button>
-              </div>
-            </div> */}
-            {imageFormat === "jpg" && (
-              <div className="flex items-center space-x-4 mx-5 mt-4">
-                <div className="flex items-center">
-                  <label htmlFor="format" className="mr-2 text-sm">
-                    Background&nbsp;color
-                  </label>
-                  <button
-                    type="button"
-                    className="w-full px-4 py-0.5 text-sm bg-zinc-600 rounded-md"
-                    onClick={toggleColorPicker}
-                  >
-                    {backgroundColor}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <button
-              className="py-2 mt-4 flex items-center justify-center text-white border-t bg-blue-900/60 border-blue-700 rounded-b-lg hover:border-dashed disabled:bg-blue-900/40 disabled:hover:border-solid disabled:cursor-not-allowed"
-              disabled={selectedDevices === 0}
-            >
-              <BsDownload className="inline-flex mr-2" />
-              Download
-            </button>
-          </form>
+          <ImageSettings
+            backgroundColor={backgroundColor}
+            toggleColorPicker={toggleColorPicker}
+            selectedDevices={selectedDevices}
+            setGridOverlayVisible={setGridOverlayVisible}
+            setMockupContainerVisible={setMockupContainerVisible}
+          />
         </div>
       </div>
 
@@ -666,29 +402,12 @@ export default function Home() {
               Made with ❤️ by Rittik Basu
             </Link>
           )}
-          {/* make the color picker visible above all the content */}
           {mockupContainerVisible && colorPickerVisible && (
-            <div className="absolute bottom-0 right-0 p-4 z-50">
-              <div className=" top-0 left-0 w-full h-full" />
-              <div className=" top-0 left-0 border border-dashed border-blue-600 bg-zinc-900 rounded-lg p-6">
-                {/* delete button in the top right corner */}
-                <button
-                  className="absolute top-2 right-2 p-0.5 bg-zinc-800 border border-dashed border-blue-500 rounded-full"
-                  onClick={toggleColorPicker}
-                >
-                  <MdClose className="h-5 w-5 text-red-500 hover:text-red-800" />
-                </button>
-                <HexColorPicker
-                  color={backgroundColor}
-                  onChange={handleColorChange}
-                />
-                <HexColorInput
-                  color={backgroundColor}
-                  onChange={handleColorChange}
-                  className="w-full px-4 py-0.5 mt-4 text-sm bg-zinc-600 rounded-md"
-                />
-              </div>
-            </div>
+            <ColorPickerModal
+              color={backgroundColor}
+              onChange={handleColorChange}
+              toggleColorPicker={toggleColorPicker}
+            />
           )}
           {/* Overlay with grid lines */}
           {gridOverlayVisible && (
